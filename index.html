@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Exam Paper Distribution</title>
+</head>
+<body>
+  <h2>Download Exam Paper</h2>
+
+  <input id="examCode" placeholder="Enter Exam Code">
+  <button onclick="getPaper()">Get Paper</button>
+
+  <p id="result"></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+
+  <script>
+    const contractAddress = "YOUR_CONTRACT_ADDRESS";
+    const abi = [
+      {
+        "inputs":[{"internalType":"string","name":"examCode","type":"string"}],
+        "name":"getPaper",
+        "outputs":[{"internalType":"string","name":"","type":"string"}],
+        "stateMutability":"view",
+        "type":"function"
+      }
+    ];
+
+    async function getPaper() {
+      if (window.ethereum) {
+        const web3 = new Web3(window.ethereum);
+        await ethereum.request({ method: 'eth_requestAccounts' });
+
+        const contract = new web3.eth.Contract(abi, contractAddress);
+        const code = document.getElementById("examCode").value;
+
+        try {
+          const hash = await contract.methods.getPaper(code).call();
+          document.getElementById("result").innerHTML =
+            `<a href="https://ipfs.io/ipfs/${hash}" target="_blank">Download Paper</a>`;
+        } catch {
+          document.getElementById("result").innerText =
+            "Paper not released yet!";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
